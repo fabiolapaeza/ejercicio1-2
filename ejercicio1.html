@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
+            <button type="button" class="btn btn-primary" onclick="displayData();">Consultar</button>
+        </div>
+        <table class="table table-bordered" id="table-1">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Color</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    
+    let table = document.getElementById('table-1').getElementsByTagName('tbody')[0];
+
+    /**
+     * Metodo para obtener los datos 
+     * 
+    */
+    const getItems = async () => {
+        const response = await fetch('https://my-json-server.typicode.com/dp-danielortiz/dptest_jsonplaceholder/items')
+        if (!response.ok) {
+            throw new Error(`Ocurrrió un error: ${response.status}`);
+        } else {
+            return await response.json();
+        }
+    }
+
+    /**
+     * 
+     * Metodo que filtra y muestra los datos filtrados por color:red
+    */
+    const displayData = async () => {
+        try {
+            let items =  await getItems();
+            table.innerHTML = '';
+            if (items.length) {
+                const red = items.filter(item => item.color === 'red');
+                // console.log(red);
+                red.forEach(element => {
+                    table.insertRow().innerHTML = `
+                        <td>${element.id}</td>
+                        <td class="text-capitalize">${element.type}</td>
+                        <td class="text-capitalize">${element.color}</td>
+                    `;
+                });
+            }
+        } catch (error) {
+            table.innerHTML = `
+                <td colspan="3" class="text-center text-danger">Ocurrió un error</td>
+            `;
+            console.error(error);
+        }
+    }
+</script>
+</html>
